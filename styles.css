@@ -1,0 +1,94 @@
+/* Garantizamos que el contenedor ocupe toda la pantalla */
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    z-index: -1;
+    background-color: #a39291;
+}
+
+@font-face {
+    font-family: 'Hanson';
+    src: url('Recursos/Hanson-Bold.otf') format('opentype');
+}
+
+.hero-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center top;
+    background-repeat: no-repeat;
+}
+
+/* Fondo */
+.layer-bg {
+    background-image: url('Recursos/fondoNachoRomaPC.jpg'); 
+    z-index: 1;
+}
+
+
+.layer-subject {
+    background-image: url('Recursos/NachoSinFondo.png');
+    z-index: 3;
+    pointer-events: none; 
+}
+
+/* Contenedor del Texto */
+.layer-text {
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Centrado vertical y horizontal */
+}
+
+.hanson-title {
+    font-family: 'Hanson', sans-serif;
+    color: white;
+    font-size: 12vw; /* Tamaño responsivo según el ancho de pantalla */
+    line-height: 0.8;
+    text-align: center;
+    margin: 0;
+    white-space: nowrap;
+    /* Sombra opcional para que destaque más */
+    text-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+/* Oscurecer el fondo con un gradiente */
+.hero-bg::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.01), rgba(0,0,0,0.9));
+}
+
+
+.main-logo {
+    width: 300px;
+    filter: drop-shadow(0 0 10px rgba(255,255,255,0.2));
+    
+}
+
+.section-title {
+    color: #fff;
+    font-family: Hanson, sans-serif; 
+    letter-spacing: 5px;
+    z-index: 2;
+    
+}
