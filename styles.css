@@ -11,28 +11,25 @@ html, body {
 @font-face {
   font-family: 'Hanson';
   src: url('Recursos/Addicionales/hanson/Hanson-Bold.otf') format('opentype'),
-       url('Recursos/Addicionales/hanson/Hanson-Bold.ttf') format('truetype'),
-       url('Recursos/Addicionales/hanson/HANSON-HAIRLINE.otf') format('opentype');
+       url('Recursos/Addicionales/hanson/Hanson-Bold.ttf') format('truetype');
 
   font-weight: normal;
   font-style: normal;
 }
 
+@font-face {
+  font-family: 'Hanson Hairline';
+  src: url('Recursos/Addicionales/hanson/HANSON-HAIRLINE.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
 
 
 .hero-container {
     position: relative;
-    width: 100vw;
+    width: 100%;
     height: 100vh;
     overflow: hidden;
-}
-
-.hero-overlay {
-
-    background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.9));
-    opacity: 0;
-    z-index:2;
-    pointer-events: none;
 }
 
 .contenedorEventos {
@@ -43,6 +40,18 @@ html, body {
     padding: 100px 5vw;
     z-index: 4;
 
+}
+
+.contenedorEventos::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh; /* La altura que ocupará el degradado */
+    transform: translateY(-100%); /* Lo empujamos para que asome por encima del borde superior del contenedor negro */
+    background: linear-gradient(to bottom, transparent 0%, #000000 150%);
+    pointer-events: none;
 }
 
 .capa {
@@ -65,7 +74,7 @@ html, body {
 
 .capa-nacho {
     background-image: url('Recursos/NachoSinFondo.png');
-    z-index: 3;
+    z-index: 2;
     pointer-events: none; 
 }
 
