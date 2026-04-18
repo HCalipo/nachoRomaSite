@@ -9,8 +9,11 @@ html, body {
 }
 
 @font-face {
-    font-family: 'Hanson';
-    src: url('Recursos/Hanson-Bold.otf') format('opentype');
+  font-family: 'Hanson';
+  src: url('Recursos/Addicionales/hanson-bold/Hanson-Bold.otf') format('opentype'),
+       url('Recursos/Addicionales/hanson-bold/Hanson-Bold.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
 }
 
 .hero-container {
@@ -56,16 +59,17 @@ html, body {
 }
 
 .hanson-title {
-    font-family: 'Hanson', sans-serif;
+    font-family: Hanson, sans-serif;
     color: white;
-    font-size: 12vw; /* Tamaño responsivo según el ancho de pantalla */
-    line-height: 0.8;
+    font-size: 9vw; 
+    line-height: 1;
     text-align: center;
     margin: 0;
     white-space: nowrap;
-    /* Sombra opcional para que destaque más */
     text-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
+
+
 
 /* Oscurecer el fondo con un gradiente */
 .hero-bg::after {
@@ -75,7 +79,7 @@ html, body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.01), rgba(0,0,0,0.9));
+    background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.9));
 }
 
 
@@ -91,4 +95,23 @@ html, body {
     letter-spacing: 5px;
     z-index: 2;
     
+}
+
+.content {
+    position: relative; /* Activa el uso de z-index en este contenedor */
+    z-index: 10;        /* Mayor que el z-index del hero-container */
+    padding-top: 80vh;  /* Empuja la lista hacia abajo para no tapar el título */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.concert-row {
+    color: white;
+    font-family: Hanson, sans-serif;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 30px;
+    text-shadow: 0 5px 15px rgba(0,0,0,1);
 }
