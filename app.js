@@ -1,6 +1,15 @@
 //animación de carga de página
 document.addEventListener("DOMContentLoaded", () => {
-    gsap.registerPlugin(ScrollTrigger);
+    gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
+
+    ScrollSmoother.create({
+        wrapper: '#smooth-wrapper',
+        content: '#smooth-content',
+        smooth: 0.5,
+        effects: true, // looks for data-speed and data-lag attributes on elements
+        normalizeScroll: true    
+    });
+
     const tl = gsap.timeline();
 
     // 1. Entrada del fondo y el sujeto (escalando juntos)
