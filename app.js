@@ -16,36 +16,76 @@ window.onload = () => {
     }
 };
 */
-// Datos de ejemplo para los conciertos
-const conciertos = [
-    { fecha: "15 MAY", ciudad: "Madrid", local: "Wizink Center" },
-    { fecha: "22 MAY", ciudad: "Barcelona", local: "Razzmatazz" },
-    { fecha: "05 JUN", ciudad: "Valencia", local: "Sala Moon" },
-    { fecha: "12 JUN", ciudad: "Sevilla", local: "Antiquarium" }
-];
+
+//conf de la api
+
+const API_KEY = "AIzaSyC0OTt-c93msl-QG-fZo_UXxmkmbiU4iTI";
+const SHEET_ID = "1jwIjYgeDJpivqor3nXVOGkJLnmLaxQEHW15Yae-CngU";
+const RANGE = "Fechas"; 
+
+async function obtenerConciertos() {
+    // Construimos la URL dinámica
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=${API_KEY}`;
+
+    try {
+        const respuesta = await fetch(url);
+        const datos = await respuesta.json();
+        
+        console.log("Datos recibidos de Google:", datos);
+        
+        if(datos.values){
+            console.log("Datos de conciertos:", datos.values);
+            renderConcerts(datos.values);
+        } else{
+            console.warn("GSAP Master Info: No hay datos disponibles para mostrar.");
+        }
+    } catch (error) {
+        console.error("Error al obtener los datos:", error);
+    }
+}
 
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. Renderizamos la lista SOLO si el contenedor existe
-    const listContainer = document.getElementById("concert-list");
-    if (listContainer) {
-        renderConcerts(listContainer);
-    } else {
-        console.warn("GSAP Master Info: No se encontró el id 'concert-list'. Saltando renderizado.");
-    }
+    obtenerConciertos();
+    
+    // (Tu código de la línea de tiempo de GSAP que ya tenías puede seguir aquí abajo)
 });
 
-function renderConcerts(container) {
-    conciertos.forEach(concierto => {
+
+function renderConcerts(fila) {
+    
+    const container = document.getElementById("concert-list");
+    if (!container) return;
+
+    container.innerHTML = "";
+
+    //saltamos la primera fila que es el encabezado
+    const datosReales = fila.slice(1);
+
+    datosReales.forEach(fila => {
         const row = document.createElement("div");
         row.className = "concert-row";
         row.innerHTML = `
-            <span class="concert-date">${concierto.fecha}</span>
-            <span class="concert-city">${concierto.ciudad}</span>
-            <span class="concert-site">${concierto.local}</span>
+            <span class="concert-date">${fila[0]}</span>
+            <span class="concert-city">${fila[1]}</span>
+            <span class="concert-site">${fila[2]}</span>
         `;
         container.appendChild(row);
     });
+    animarConciertos();
 }
+
+function animarConciertos() {
+    gsap.from(".concert-row", {
+        duration: 0.8,
+        y: 30,                 // Aparecen desde 30px más abajo
+        opacity: 0,            // Pasan de transparentes a opacos
+        stagger: 0.2,          // Retraso de 0.2 segundos entre la aparición de cada fila
+        ease: "back.out(1.7)", // Añade un ligero rebote fluido al terminar
+        delay: 1.5             // Esperamos un poco para que termine la animación del título principal
+    });
+}
+
+
 
 document.addEventListener("DOMContentLoaded", () => {
     const tl = gsap.timeline();
@@ -59,21 +99,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // 2. El texto Hanson aparece desde atrás (un poco más pequeño y subiendo)
-    /*
+    /**/
     tl.from(".hanson-title", {
-        duration: 1.5,
+        duration: 2,
         y: 100,
         scale: 0.8,
         opacity: 0,
-        ease: "expo.out"
+        ease: "expo.Out"
     }, "-=1"); // Empieza 1 segundo antes de que termine la anterior
-    */
-    // 3. Animación de las fechas de conciertos (que ya teníamos)
-    tl.from(".concert-row", {
-        duration: 0.8,
-        opacity: 0,
-        x: -20,
-        stagger: 0.1,
-        ease: "power2.out"
-    }, "-=0.5");
+    
 });
