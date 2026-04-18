@@ -26,7 +26,7 @@ html, body {
     overflow: hidden;
 }
 
-.layer {
+.capa {
     position: absolute;
     top: 0;
     left: 0;
@@ -38,27 +38,27 @@ html, body {
 }
 
 /* Fondo */
-.layer-bg {
+.capa-bg {
     background-image: url('Recursos/fondoNachoRomaPC.jpg'); 
     z-index: 1;
 }
 
 
-.layer-subject {
+.capa-nacho {
     background-image: url('Recursos/NachoSinFondo.png');
     z-index: 3;
     pointer-events: none; 
 }
 
 /* Contenedor del Texto */
-.layer-text {
+.capa-text {
     z-index: 2;
     display: flex;
     justify-content: center;
     align-items: center; /* Centrado vertical y horizontal */
 }
 
-.hanson-title {
+.letras-nacho {
     font-family: Hanson, sans-serif;
     color: white;
     font-size: 9vw; 
@@ -67,6 +67,7 @@ html, body {
     margin: 0;
     white-space: nowrap;
     text-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    
 }
 
 
@@ -97,7 +98,7 @@ html, body {
     
 }
 
-.content {
+.contenido {
     position: relative; /* Activa el uso de z-index en este contenedor */
     z-index: 10;        /* Mayor que el z-index del hero-container */
     padding-top: 80vh;  /* Empuja la lista hacia abajo para no tapar el título */
@@ -106,7 +107,7 @@ html, body {
     align-items: center;
 }
 
-.concert-row {
+.evento-row {
     color: white;
     font-family: Hanson, sans-serif;
     font-size: 1.5rem;
