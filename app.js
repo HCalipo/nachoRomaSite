@@ -1,5 +1,8 @@
 //animación de carga de página
 
+gsap.registerPlugin(ScrollTrigger);
+
+
 document.addEventListener("DOMContentLoaded", () => {
     const tl = gsap.timeline();
 
@@ -93,6 +96,17 @@ function animarEventos() {
         delay: 1.5             // Esperamos un poco para que termine la animación del título principal
     });
 }
-
+gsap.to(".hero-overlay", {
+    opacity: 1,
+    ease: "none", // Usamos 'none' para que el fundido sea lineal con el movimiento del ratón
+    scrollTrigger: {
+        trigger: "#hero",
+        start: "top top",      // Inicia cuando la parte superior del hero toca la parte superior del viewport
+        end: "+=100%",         // La animación dura el equivalente al 100% de la altura de la pantalla
+        scrub: true,           // Vincula la opacidad directamente a la barra de scroll
+        pin: true,             // Fija (ancla) el hero en la pantalla mientras hacemos scroll
+        pinSpacing: false      // Evita que se añada espacio extra debajo, permitiendo que la sección de eventos pase por encima
+    }
+});
 
 
