@@ -1,9 +1,6 @@
 //animación de carga de página
-
-gsap.registerPlugin(ScrollTrigger);
-
-
 document.addEventListener("DOMContentLoaded", () => {
+    gsap.registerPlugin(ScrollTrigger);
     const tl = gsap.timeline();
 
     // 1. Entrada del fondo y el sujeto (escalando juntos)
@@ -23,6 +20,45 @@ document.addEventListener("DOMContentLoaded", () => {
         ease: "expo.Out"
     }, "-=1"); // Empieza 1 segundo antes de que termine la anterior
     
+    // 2. Animación del fundido a negro con ScrollTrigger
+    gsap.to(".hero-overlay", {
+        opacity: 1,
+        ease: "none",
+        scrollTrigger: {
+            trigger: "#hero",
+            start: "top top",
+            end: "+=100%",
+            scrub: true,
+            pin: true,
+            pinSpacing: false
+        }
+    });
+
+    gsap.to(".capa-bg", {
+        y: "30%", // Se desplaza un 30% hacia abajo
+        ease: "none",
+        scrollTrigger: {
+            trigger: "#hero",
+            start: "top top",
+            end: "bottom top", // Termina cuando el hero sale por arriba de la pantalla
+            scrub: true        // Atado al scroll del ratón
+        }
+    });
+
+    // Hacemos que la foto de Nacho se mueva a una velocidad diferente (crea efecto 3D)
+    gsap.to(".capa-nacho", {
+        y: "15%", 
+        ease: "none",
+        scrollTrigger: {
+            trigger: "#hero",
+            start: "top top",
+            end: "bottom top",
+            scrub: true
+        }
+    });
+
+    obtenerEventos();
+
 });
 
 
@@ -51,12 +87,6 @@ async function obtenerEventos() {
         console.error("Error al obtener los datos:", error);
     }
 }
-
-document.addEventListener("DOMContentLoaded", () => {
-    obtenerEventos();
-    
-    // (Tu código de la línea de tiempo de GSAP que ya tenías puede seguir aquí abajo)
-});
 
 /**/
 function cargarEventos(fila) {
@@ -96,17 +126,6 @@ function animarEventos() {
         delay: 1.5             // Esperamos un poco para que termine la animación del título principal
     });
 }
-gsap.to(".hero-overlay", {
-    opacity: 1,
-    ease: "none", // Usamos 'none' para que el fundido sea lineal con el movimiento del ratón
-    scrollTrigger: {
-        trigger: "#hero",
-        start: "top top",      // Inicia cuando la parte superior del hero toca la parte superior del viewport
-        end: "+=100%",         // La animación dura el equivalente al 100% de la altura de la pantalla
-        scrub: true,           // Vincula la opacidad directamente a la barra de scroll
-        pin: true,             // Fija (ancla) el hero en la pantalla mientras hacemos scroll
-        pinSpacing: false      // Evita que se añada espacio extra debajo, permitiendo que la sección de eventos pase por encima
-    }
-});
+
 
 
