@@ -29,11 +29,9 @@ html, body {
     position: relative;
     width: 100%;
     height: 100vh;
-    overflow: hidden;
 }
 
 .contenedorEventos {
-
     position: relative;
     background-color: #000000;
     min-height: 100vh;
@@ -83,7 +81,7 @@ html, body {
     z-index: 2;
     display: flex;
     justify-content: center;
-    align-items: center; /* Centrado vertical y horizontal */
+    align-items: center; 
 }
 
 .letras-nacho {
@@ -120,3 +118,29 @@ html, body {
     gap: 30px;
     text-shadow: 0 5px 15px rgba(0,0,0,1);
 }
+
+/*HEADER*/
+
+.header {
+    position: sticky;
+    top: 0;
+    padding: 0%;
+    margin: 0;
+
+    font-family: Hanson Hairline, sans-serif;
+    font-size: xx-large;
+    color:white;
+
+    display: flex;
+    justify-content: center;
+    z-index: 10;
+}
+
+.nav-link {
+  position: relative;
+  display: inline-block;
+  text-decoration: none;
+  color:white;
+  padding-bottom: 5px;
+}
+
