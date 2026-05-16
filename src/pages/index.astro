@@ -1,17 +1,23 @@
 ---
-import Header from "./components/header.astro"
+import Layout from "../layouts/Layout.astro";
+import Foto from "../components/foto.astro";
+import Fechas from "../components/fechas.astro";
+import Contacto from "../components/contacto.astro";
+import Footer from "../components/footer.astro";
+import Header from "../components/header.astro";
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<header />
-	</body>
-</html>
+<Layout
+  title="Nacho Romá"
+  description="¿Preparado para la fiesta? Apunta la fecha y el lugar y nos veremos allí ;)"
+>
+
+<main>
+    <Header />
+    <Foto />
+    <Fechas />
+    <Contacto />
+  </main>
+
+  <Footer />
+</Layout>
