@@ -2,32 +2,96 @@
 
 ---
 
-<header class="fixed w-full top-0 z-50 bg-transparent">
-  <nav class="flex justify-center items-center h-7 gap-x-14 relative">
-    <a
-      href="#inicio"
-      aria-current="page"
-      class="font-hanson font-thin text-white tracking-[0.15em] text-sm uppercase no-underline transition-colors duration-300"
-    >
-      Inicio
-    </a>
-    <a
-      href="#fechas"
-      class="font-hanson font-thin text-white/60 tracking-[0.15em] text-sm uppercase no-underline transition-colors duration-300 hover:text-white/90"
-    >
-      Fechas
-    </a>
-    <a
-      href="#contacto"
-      class="font-hanson font-thin text-white/60 tracking-[0.15em] text-sm uppercase no-underline transition-colors duration-300 hover:text-white/90"
-    >
-      Contacto
-    </a>
+<header class="fixed w-full top-0 z-50 bg-transparent pt-4">
+  <nav id="nav-menu" class="flex justify-center items-center gap-x-14 relative inline-flex w-full preload-transitions">
+    
+  <a href="#inicio" class="nav-item" aria-current="page">
+    Inicio
+  </a>
+  <a href="#fechas" class="nav-item">
+    Fechas
+  </a>
+  <a href="#contacto" class="nav-item">
+    Contacto
+  </a>
 
-    <!-- Indicador de sección activa -->
-    <div
-      class="indicator absolute bottom-0 left-[calc(50%-10rem)] h-[1px] w-15 bg-white "
-      aria-hidden="true"
-    ></div>
   </nav>
 </header>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const nav = document.getElementById('nav-menu');
+    const links = Array.from(document.querySelectorAll('.nav-item')) as HTMLElement[];
+    
+    let currentIndex = links.findIndex(link => link.getAttribute('aria-current') === 'page');
+    if (currentIndex === -1) currentIndex = 0;
+
+    
+    setTimeout(() => {
+      if (nav) nav.classList.remove('preload-transitions');
+    }, 100);
+
+    const sections = links.map(link => {
+      const id = link.getAttribute('href');
+      return id ? document.querySelector(id) : null;
+    }).filter(Boolean) as HTMLElement[];
+
+    if (sections.length === 0) {
+      console.warn("Aviso: No se han encontrado las secciones en el DOM.");
+      return;
+    }
+
+    //funcion mover linea
+    const updateLine = (newIndex: number) => {
+      if (newIndex !== -1 && newIndex !== currentIndex) {
+        
+        if (newIndex > currentIndex) {
+          links[currentIndex].style.setProperty('--line-origin', 'right'); 
+          links[newIndex].style.setProperty('--line-origin', 'left');      
+        } else {
+          links[currentIndex].style.setProperty('--line-origin', 'left');  
+          links[newIndex].style.setProperty('--line-origin', 'right');     
+        }
+
+        links.forEach((link, idx) => {
+          if (idx === newIndex) {
+            link.setAttribute('aria-current', 'page');
+          } else {
+            link.removeAttribute('aria-current');
+          }
+        });
+
+        currentIndex = newIndex;
+      }
+    };
+
+    //Scroll
+
+    const observerOptions = {
+      root: null,
+      rootMargin: '-20% 0px -40% 0px', 
+      threshold: 0
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.getAttribute('id');
+          if (!id) return;
+
+          const currentId = `#${id}`;
+          const newIndex = links.findIndex(link => link.getAttribute('href') === currentId);
+          updateLine(newIndex);
+        }
+      });
+    }, observerOptions);
+
+    sections.forEach(section => observer.observe(section));
+    //Click
+    links.forEach((link, clickedIndex) => {
+      link.addEventListener('click', () => {
+        updateLine(clickedIndex);
+      });
+    });
+  });
+</script>
