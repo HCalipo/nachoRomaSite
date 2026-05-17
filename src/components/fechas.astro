@@ -1,0 +1,38 @@
+---
+
+
+const eventos = [
+  { fecha: "15/06", ciudad: "Madrid", local: "Sala Sol" },
+  { fecha: "22/06", ciudad: "Barcelona", local: "Razzmatazz" },
+  { fecha: "05/07", ciudad: "Valencia", local: "Marina Sur" },
+  { fecha: "18/08", ciudad: "Alicante", local: "Plaza de Toros" }
+];
+---
+
+<section id="fechas" class="w-full relative py-24 px-8 md:px-16">
+  
+  <div class="max-w-5xl mx-auto">
+    
+    <div class="flex flex-col">
+      {eventos.map((evento) => (
+        
+        <div class="group grid grid-cols-3 items-center py-6 border-b border-white/20 transition-colors hover:border-white/50">
+          
+          <span class="text-left font-hanson text-white text-xl tracking-wider">
+            {evento.fecha}
+          </span>
+          
+          <span class="text-center font-hanson text-white/70 text-lg uppercase tracking-widest">
+            {evento.ciudad}
+          </span>
+          
+          <span class="text-right text-white/60 text-base uppercase tracking-widest">
+            {evento.local}
+          </span>
+          
+        </div>
+      ))}
+    </div>
+
+  </div>
+</section>
