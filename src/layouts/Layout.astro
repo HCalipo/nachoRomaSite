@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 
+import Header from "../components/header.astro";
 export interface Props {
   title: string;
   description?: string;
@@ -17,10 +18,8 @@ const { title, description } = Astro.props;
     <meta name="description" content={description ?? ""} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description ?? ""} />
-    <meta property="og:type" content="website" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
-    <meta name="generator" content={Astro.generator} />
 
     <link rel="preload" href="/Foto_escritorio.webp" as="image" />
     <link rel="preload" href="/Foto_escritorio_sinFondo.webp" as="image" />
@@ -30,6 +29,7 @@ const { title, description } = Astro.props;
     <title>{title}</title>
   </head>
   <body>
+    <Header />
     <div id="smooth-wrapper">
       <div id="smooth-content">
         <slot />
@@ -40,26 +40,94 @@ const { title, description } = Astro.props;
       import { gsap } from "gsap";
       import { ScrollTrigger } from "gsap/ScrollTrigger";
       import { ScrollSmoother } from "gsap/ScrollSmoother";
+      import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 
-      gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
+      gsap.registerPlugin(ScrollTrigger, ScrollSmoother, ScrollToPlugin);
 
       document.addEventListener("DOMContentLoaded", () => {
         let mm = gsap.matchMedia();
+        let smoother : ScrollSmoother | undefined;
 
+        //configuración pc
         mm.add("(min-width: 768px)", () => {
           
-          ScrollSmoother.create({
+          smoother = ScrollSmoother.create({
             wrapper: "#smooth-wrapper",
             content: "#smooth-content",
-            smooth: 1.5,               
-            effects: true,             
-            smoothTouch: false,        //para evitar movidas con las tablets/ordenadores táctiles
-            normalizeScroll: true   
+            smooth: 1.5,
+            effects: true,
+            normalizeScroll: true
           });
 
+          const header = document.querySelector(".header-principal");
+          if (header) {
+            ScrollTrigger.create({
+              start: "top top",
+              end: "max",
+              onUpdate: (self) => {
+                if (self.direction === 1 && self.scroll() > 100) {
+                  gsap.to(header, { yPercent: -100, duration: 0.3, ease: "power2.out" });
+                } else {
+                  gsap.to(header, { yPercent: 0, duration: 0.3, ease: "power2.out" });
+                }
+              }
+            });
+          }
+
+          const links = document.querySelectorAll<HTMLAnchorElement>(".nav-item");
+          links.forEach(link => {
+            const targetId = link.getAttribute("href");
+            if (!targetId || !targetId.startsWith("#")) return;
+            const targetSection = document.querySelector(targetId);
+
+            if (targetSection) {
+              ScrollTrigger.create({
+                trigger: targetSection,
+                start: "top center", 
+                end: "bottom center",
+                onToggle: (self) => {
+                  if (self.isActive) {
+                    links.forEach(l => l.removeAttribute("aria-current"));
+                    link.setAttribute("aria-current", "page");
+                  }
+                }
+              });
+            }
+          });
         });
+
+        // configuración general
+        const links = document.querySelectorAll<HTMLAnchorElement>(".nav-item"); 
+        
+        links.forEach(link => {
+          link.addEventListener("click", (e) => {
+            e.preventDefault(); 
+            
+            const targetId = link.getAttribute("href");
+            if (!targetId || !targetId.startsWith("#")) return;
+            
+            const targetSection = document.querySelector(targetId);
+            
+            if (targetSection) {
+              if (smoother) {
+                smoother.scrollTo(targetSection, true, "top top");
+              } else {
+                gsap.to(window, {
+                  scrollTo: { 
+                    y: targetSection, 
+                    offsetY: 70 
+                  }, 
+                  duration: 1.5,        
+                  ease: "power3.inOut"  
+                });
+              }
+            }
+          });
+        });
+
       });
     </script>
+
 
   </body>
 </html>
