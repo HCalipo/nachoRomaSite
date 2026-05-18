@@ -1,7 +1,7 @@
 ---
 
 ---
-<section id="hero" class="md:sticky md:top-0 relative w-full h-screen bg-black">
+<section id="hero" class="relative w-full h-screen bg-black">
   <div class="absolute inset-0 overflow-hidden">
 
     <img 
@@ -13,27 +13,28 @@
       decoding="sync"
     />
 
-    <div class="letras-nacho flex absolute inset-0 items-center justify-center z-60 md:z-10">
-      <h1 class="font-family-hanson font-bold text-white text-[20vw] md:text-[10vw] leading-none text-center select-none flex gap-x-[8vw] ">
-        <span>NACHO <br class="block md:hidden"/> ROMÁ </span>
-        
-       
+    <div class="letras-nacho flex absolute inset-0 items-center justify-center z-10 pointer-events-none">
+      <h1 class="font-family-hanson font-bold text-white text-[20vw] md:text-[10vw] leading-[1] md:leading-none text-center select-none">
+        NACHO<br class="block md:hidden"/> ROMÁ
       </h1>
     </div>
 
-    
-    
-    
     <img 
       src="/Foto_escritorio_sinFondo.webp" 
-      class="capa-nacho absolute inset-0 w-full h-full object-cover object-center md:object-top z-20" 
+      class="capa-nacho absolute inset-0 w-full h-full object-cover object-center md:object-top z-20 pointer-events-none" 
       alt="Nacho sin fondo" 
       fetchpriority="high"
       loading="eager"
       decoding="sync"
     />
 
-    <div class="hero-overlay absolute inset-0 bg-black opacity-0 z-30 pointer-events-none"></div>
+    <div class="letras-animadas flex md:hidden absolute inset-0 items-center justify-center z-30 pointer-events-none">
+      <h1 class="font-family-hanson font-bold text-transparent text-[20vw] md:text-[10vw] leading-[1] md:leading-none text-center select-none" style="-webkit-text-stroke: 2px rgba(255,255,255,0.9);">
+        NACHO<br class="block md:hidden"/> ROMÁ
+      </h1>
+    </div>
+
+    <div class="hero-overlay absolute inset-0 bg-black opacity-0 z-40 pointer-events-none"></div>
   </div>
 </section>
 
@@ -44,26 +45,20 @@
   gsap.registerPlugin(ScrollTrigger);
 
   document.addEventListener("DOMContentLoaded", () => {
-    let mm = gsap.matchMedia();
+    
 
-    // ── ESCRITORIO ────────────────────────────────────────
-    mm.add("(min-width: 768px)", () => {
 
-      // Siguiente sección por encima del hero al hacer scroll
-      const nextSection = document.querySelector<HTMLElement>("#hero + section");
-      if (nextSection) {
-        nextSection.style.position = "relative";
-        nextSection.style.zIndex = "10";
-      }
-
+    // FUNCIÓN MAESTRA: Contiene la animación y el parallax
+    const iniciarParallaxHero = (distanciaFondo: number, distanciaLetras: number) => {
       const tlEntrada = gsap.timeline();
+      
       tlEntrada
         .from([".capa-bg", ".capa-nacho"], {
           duration: 2,
           scale: 1.1,
           ease: "power3.inOut",
         })
-        .from(".letras-nacho", {
+        .from(".letras-animadas, .letras-nacho", {
           duration: 2,
           y: 100,
           scale: 0.8,
@@ -71,7 +66,6 @@
           ease: "expo.out",
         }, "-=1");
 
-      // Parallax al hacer scroll
       tlEntrada.then(() => {
         ScrollTrigger.refresh();
 
@@ -82,21 +76,33 @@
           scrub: 1.5,
         };
 
-        // Fondo: lento
-        gsap.to(".capa-bg,.capa-nacho", {
-          y: -80,
+        // Animación del fondo y sujeto (lenta)
+        gsap.to(".capa-bg, .capa-nacho", {
+          y: distanciaFondo,
           ease: "none",
           scrollTrigger: scrollCfg,
         });
 
-        // Letras: rápido
-        gsap.to(".letras-nacho", {
-          y: -280,
+        // Animación de las letras (rápida)
+        gsap.to(".letras-animadas, .letras-nacho", {
+          y: distanciaLetras,
           ease: "none",
           scrollTrigger: scrollCfg,
         });
       });
+    };
 
+    // ── GESTIÓN DE PANTALLAS (Móvil vs Escritorio) ────────────────
+    let mm = gsap.matchMedia();
+
+    mm.add("(max-width: 767px)", () => {
+      // En móvil: movemos el fondo muy poco (-30) y las letras algo más (-120)
+      iniciarParallaxHero(-30, -120);
+    });
+
+    mm.add("(min-width: 768px)", () => {
+      // En ordenador: distancias más exageradas para el efecto dramático (-80 y -280)
+      iniciarParallaxHero(-80, -280);
     });
 
   });
