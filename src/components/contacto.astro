@@ -1,0 +1,115 @@
+---
+// contacto.astro
+---
+<section id="contacto" class="w-full relative py-24 px-8 md:px-16 overflow-hidden bg-black border-t border-white/10">
+  <div class="max-w-5xl mx-auto flex flex-col md:flex-row gap-16 md:gap-12">
+    
+    <div class="w-full md:w-1/2 flex flex-col justify-center text-contacto">
+      <h2 class="font-hanson text-white text-5xl md:text-7xl uppercase mb-6 leading-none">
+        Booking <br/> <span class="text-transparent" style="-webkit-text-stroke: 1px white;">& Info</span>
+      </h2>
+      <p class="texto-contacto text-white/60 mb-10 text-sm md:text-base tracking-wide max-w-sm">
+        ¿Quieres contratar a Nacho Romá o tienes alguna propuesta? Escríbenos y nos pondremos en contacto contigo lo antes posible.
+      </p>
+      
+      <a 
+        href="https://www.instagram.com/nachoromadj" 
+        target="_blank" 
+        rel="noopener noreferrer" 
+        class="instagram-btn group flex items-center gap-4 w-fit cursor-pointer"
+      >
+        <div class="w-14 h-14 rounded-full border border-white/30 flex items-center justify-center transition-all duration-300 group-hover:border-white group-hover:bg-white text-white group-hover:text-black">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+          </svg>
+        </div>
+        <span class="font-family-hanson tracking-widest text-sm text-white/50 group-hover:text-white transition-colors duration-300">
+          @nachoromadj
+        </span>
+      </a>
+    </div>
+
+    <div class="w-full md:w-1/2">
+      <form action="https://formspree.io/f/TU_CODIGO_AQUI" method="POST" class="flex flex-col gap-8 form-contacto">
+        
+        <div class="input-grupo relative">
+          <input 
+            type="text" 
+            name="nombre" 
+            placeholder="TU NOMBRE" 
+            required 
+            class="w-full bg-transparent border-b border-white/20 py-3 text-white placeholder-white/30 focus:outline-none focus:border-white transition-colors uppercase tracking-widest text-xs md:text-sm"
+          />
+        </div>
+
+        <div class="input-grupo relative">
+          <input 
+            type="email" 
+            name="email" 
+            placeholder="TU EMAIL" 
+            required 
+            class="w-full bg-transparent border-b border-white/20 py-3 text-white placeholder-white/30 focus:outline-none focus:border-white transition-colors uppercase tracking-widest text-xs md:text-sm"
+          />
+        </div>
+
+        <div class="input-grupo relative">
+          <textarea 
+            name="mensaje" 
+            rows="4" 
+            placeholder="TU MENSAJE" 
+            required 
+            class="w-full bg-transparent border-b border-white/20 py-3 text-white placeholder-white/30 focus:outline-none focus:border-white transition-colors tracking-widest text-xs md:text-xs resize-none"
+          ></textarea>
+        </div>
+
+        <button 
+          type="submit" 
+          class="boton-enviar w-full md:w-auto md:self-start mt-2 font-hanson uppercase tracking-widest text-xs md:text-sm border border-white py-4 px-10 text-white hover:bg-white hover:text-black transition-all duration-300"
+        >
+          Enviar Mensaje
+        </button>
+        
+      </form>
+    </div>
+
+  </div>
+</section>
+
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  document.addEventListener("DOMContentLoaded", () => {
+    
+    // 1. Animación de los textos de la izquierda (aparecen desde abajo hacia arriba)
+    gsap.from(".text-contacto > *", {
+      y: 40,
+      opacity: 0,
+      duration: 1,
+      stagger: 0.2, // Efecto cascada entre el título, el párrafo y el botón de Insta
+      ease: "power3.out",
+      scrollTrigger: {
+        trigger: "#contacto",
+        start: "top 75%", // Se dispara cuando la sección entra por el 75% de la pantalla
+      }
+    });
+
+    // 2. Animación del formulario de la derecha (aparece desde la derecha hacia el centro)
+    gsap.from(".form-contacto .input-grupo, .boton-enviar", {
+      x: 40,
+      opacity: 0,
+      duration: 1,
+      stagger: 0.15, // Las líneas del formulario van entrando una a una
+      ease: "power3.out",
+      scrollTrigger: {
+        trigger: "#contacto",
+        start: "top 70%", // Arranca una milésima de segundo después que los textos
+      }
+    });
+
+  });
+</script>
