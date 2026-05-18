@@ -95,7 +95,23 @@ try {
         }
       }
     );
+       const fechasTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: ".contenedor-fechas",
+        start: "top 85%",    
+        end: "bottom 85%",   
+        scrub: 0.8,          
+        markers: false        
+      }
+    });
 
+    // Añadimos la animación a la línea de tiempo
+    fechasTl.from(".fila-fecha", {
+      y: 40,               
+      opacity: 0,          
+      ease: "power2.out",  
+      stagger: 0.5         
+    });
 
   });
 </script>
