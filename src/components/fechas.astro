@@ -18,14 +18,6 @@ try {
   const response = await fetch(url);
   const data = await response.json();
   
-  // ESTO ES NUEVO: Te imprimirá en la terminal de tu ordenador lo que dice Google
-  console.log("Respuesta de Google:", data);
-
-  // Si la petición falla, mostramos el motivo exacto
-  if (!response.ok) {
-    console.error("Error de la API de Google:", data.error?.message);
-  }
-  
   if (data.values) {
     eventos = data.values.map((fila: string[]) => ({
       fecha: fila[0] || "",  
@@ -44,7 +36,6 @@ try {
     
     <div class="flex flex-col">
       {eventos.map((eventos) => (
-        // Mantenemos el grid-cols-3 en todas las pantallas. Solo variamos el padding (py-3 en móvil, py-6 en ordenador)
         <div class="group grid grid-cols-3 items-center py-3 border-b border-white/20 transition-colors hover:border-white/50 md:py-6">
           
           <span class="font-hanson text-white text-sm md:text-xl uppercase text-left tracking-wider">
