@@ -58,5 +58,9 @@
 
 
   .letras-nacho{
-    text-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    text-shadow: 0 10px 10px rgba(0,0,0,0.5);
+  }
+
+  .texto-contacto {
+    font-weight: 550;
   }
