@@ -7,7 +7,8 @@ const RANGE = "A2:C";
 const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=${API_KEY}`;
 
 interface Evento {
-  fecha: string;
+  letrasDia: string;
+  fechaNum: string;
   ciudad: string;
   local: string;
 }
@@ -20,16 +21,17 @@ try {
   
   if (data.values) {
     eventos = data.values.map((fila: string[]) => ({
-      fecha: fila[0] || "",  
-      ciudad: fila[1] || "",  
-      local: fila[2] || ""    
+      letrasDia: fila[0].split(" ")[0] || "", // "SAB"  
+      fechaNum: fila[0].split(" ")[1] || "", // "18/04" 
+      local: fila[1] || "" ,  
+      ciudad: fila[2] || ""  
     }));
   }
 } catch (error) {
   console.error("Hubo un error de red al coger las fechas:", error);
 }
 ---
-<section id="fechas" class="w-full relative py-24 px-8 md:px-16 overflow-hidden">
+<section id="fechas" class="w-full relative py-24 px-8 md:px-16 overflow-hidden bg-black">
   <div class="max-w-5xl mx-auto flex flex-col gap-12">
     
 <div class="relative w-full text-center font-hanson text-[12vw] md:text-[8vw] uppercase leading-none select-none">
@@ -46,18 +48,17 @@ try {
 
     <div class="contenedor-fechas flex flex-col mt-4 md:mt-8">
       {eventos.map((evento) => (
-        <div class="fila-fecha group grid grid-cols-3 items-center py-3 border-b border-white/20 transition-colors hover:border-white/50 md:py-6">
-          
-          <span class="font-hanson text-white text-sm md:text-xl text-left tracking-wider">
-            {evento.fecha}
+        <div class="fila-fecha group grid grid-cols-[0.5fr_1fr_1fr] items-center py-3 border-b border-white/20 transition-colors hover:border-white/50 md:py-6">
+          <span class="font-hanson text-white/70 uppercase text-[9px] sm:text-xs md:text-xl text-left tracking-wider">
+            {evento.letrasDia} <br/> {evento.fechaNum}
           </span>
           
-          <span class="text-white/70 text-xs md:text-lg uppercase tracking-widest text-center">
-            {evento.ciudad}
-          </span>
-          
-          <span class="text-white/60 text-[10px] sm:text-xs md:text-base uppercase tracking-widest text-right">
+          <span class="text-white text-[8px] sm:text-xs md:text-base uppercase tracking-wider text-center">
             {evento.local}
+          </span>
+
+          <span class="text-white/70 text-[8px] sm:text-xs md:text-lg uppercase tracking-wider text-center">
+            {evento.ciudad}
           </span>
           
         </div>
