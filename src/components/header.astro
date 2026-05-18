@@ -2,96 +2,97 @@
 
 ---
 
-<header class="hidden md:flex fixed w-full top-0 z-50 bg-transparent pt-4">
-  <nav id="nav-menu" class="hidden md:flex justify-center items-center gap-x-14 relative inline-flex w-full preload-transitions">
+<header class="header-principal fixed w-full top-0 z-50 bg-black/0 backdrop-blur-md py-1 px-6 md:px-12 border-b border-white/10">
+    <div class="relative flex items-center justify-center w-full">
     
-  <a href="#inicio" class="nav-item" aria-current="page">
-    Inicio
-  </a>
-  <a href="#fechas" class="nav-item">
-    Fechas
-  </a>
-  <a href="#contacto" class="nav-item">
-    Contacto
-  </a>
-
-  </nav>
+    <nav id="nav-menu" class="flex justify-center items-center gap-x-6 md:gap-x-14 relative preload-transitions">
+      <a href="#hero" class="nav-item text-white/60 hover:text-white transition-colors relative aria-[current=page]:text-white after:content-[''] after:absolute after:-bottom-2 after:left-0 after:w-0 after:h-[2px] after:bg-white after:transition-all aria-[current=page]:after:w-full">
+        Inicio
+      </a>
+      <a href="#fechas" class="nav-item text-white/60 hover:text-white transition-colors relative aria-[current=page]:text-white after:content-[''] after:absolute after:-bottom-2 after:left-0 after:w-0 after:h-[2px] after:bg-white after:transition-all aria-[current=page]:after:w-full">
+        Fechas
+      </a>
+      <a href="#contacto" class="nav-item text-white/60 hover:text-white transition-colors relative aria-[current=page]:text-white after:content-[''] after:absolute after:-bottom-2 after:left-0 after:w-0 after:h-[2px] after:bg-white after:transition-all aria-[current=page]:after:w-full">
+        Contacto
+      </a>
+    </nav>
+    
+  </div>
 </header>
 
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const nav = document.getElementById('nav-menu');
-    const links = Array.from(document.querySelectorAll('.nav-item')) as HTMLElement[];
-    
-    let currentIndex = links.findIndex(link => link.getAttribute('aria-current') === 'page');
-    if (currentIndex === -1) currentIndex = 0;
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import { ScrollSmoother } from "gsap/ScrollSmoother";
 
-    
-    setTimeout(() => {
-      if (nav) nav.classList.remove('preload-transitions');
-    }, 100);
+  gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
-    const sections = links.map(link => {
-      const id = link.getAttribute('href');
-      return id ? document.querySelector(id) : null;
-    }).filter(Boolean) as HTMLElement[];
+  document.addEventListener("DOMContentLoaded", () => {
+    const links = document.querySelectorAll<HTMLAnchorElement>(".nav-item");
+    const header = document.querySelector(".header-principal");
 
-    if (sections.length === 0) {
-      console.warn("Aviso: No se han encontrado las secciones en el DOM.");
-      return;
-    }
+    let mm = gsap.matchMedia();
 
-    //funcion mover linea
-    const updateLine = (newIndex: number) => {
-      if (newIndex !== -1 && newIndex !== currentIndex) {
+    links.forEach(link => {
+      link.addEventListener("click", (e) => {
+        e.preventDefault();
         
-        if (newIndex > currentIndex) {
-          links[currentIndex].style.setProperty('--line-origin', 'right'); 
-          links[newIndex].style.setProperty('--line-origin', 'left');      
-        } else {
-          links[currentIndex].style.setProperty('--line-origin', 'left');  
-          links[newIndex].style.setProperty('--line-origin', 'right');     
-        }
+        const targetId = link.getAttribute("href"); 
+        
+        if (!targetId || !targetId.startsWith("#")) return; 
 
-        links.forEach((link, idx) => {
-          if (idx === newIndex) {
-            link.setAttribute('aria-current', 'page');
-          } else {
-            link.removeAttribute('aria-current');
+        const targetSection = document.querySelector(targetId);
+        
+        if (!targetSection) return; 
+
+        const smoother = ScrollSmoother.get(); 
+
+        if (smoother) {
+          smoother.scrollTo(targetSection, true, "top top");
+        } else {
+          targetSection.scrollIntoView({ behavior: "smooth" });
+        }
+      });
+    });
+
+    mm.add("(min-width: 768px)", () => {
+      
+      if (header) {
+        ScrollTrigger.create({
+          start: "top top",
+          end: "max",
+          onUpdate: (self) => {
+            if (self.direction === 1 && self.scroll() > 100) {
+              gsap.to(header, { yPercent: -100, duration: 0.3, ease: "power2.out" });
+            } else {
+              gsap.to(header, { yPercent: 0, duration: 0.3, ease: "power2.out" });
+            }
           }
         });
-
-        currentIndex = newIndex;
       }
-    };
 
-    //Scroll
+      links.forEach(link => {
+        const targetId = link.getAttribute("href");
+        if (!targetId || !targetId.startsWith("#")) return;
 
-    const observerOptions = {
-      root: null,
-      rootMargin: '-20% 0px -40% 0px', 
-      threshold: 0
-    };
+        const targetSection = document.querySelector(targetId);
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const id = entry.target.getAttribute('id');
-          if (!id) return;
-
-          const currentId = `#${id}`;
-          const newIndex = links.findIndex(link => link.getAttribute('href') === currentId);
-          updateLine(newIndex);
+        // Solo vigilamos la sección si realmente existe en el HTML
+        if (targetSection) {
+          ScrollTrigger.create({
+            trigger: targetSection,
+            start: "top center",
+            end: "bottom center",
+            onToggle: (self) => {
+              if (self.isActive) {
+                links.forEach(l => l.removeAttribute("aria-current"));
+                link.setAttribute("aria-current", "page");
+              }
+            }
+          });
         }
       });
-    }, observerOptions);
 
-    sections.forEach(section => observer.observe(section));
-    //Click
-    links.forEach((link, clickedIndex) => {
-      link.addEventListener('click', () => {
-        updateLine(clickedIndex);
-      });
     });
   });
 </script>
