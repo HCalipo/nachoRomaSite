@@ -1,7 +1,7 @@
 ---
 
 ---
-<section id="hero" class="relative w-full h-screen bg-black">
+<section id="hero" class="relative w-full h-screen bg-black opacity-0">
   <div class="absolute inset-0 overflow-hidden">
 
     <img 
@@ -45,65 +45,83 @@
   gsap.registerPlugin(ScrollTrigger);
 
   document.addEventListener("DOMContentLoaded", () => {
-    
 
+    const imagenes = Array.from(
+      document.querySelectorAll<HTMLImageElement>(".capa-bg, .capa-nacho")
+    );
 
-    // FUNCIÓN MAESTRA: Contiene la animación y el parallax
-    const iniciarParallaxHero = (distanciaFondo: number, distanciaLetras: number) => {
-      const tlEntrada = gsap.timeline();
-      
-      tlEntrada
-        .from([".capa-bg", ".capa-nacho"], {
-          duration: 2,
-          scale: 1.1,
-          ease: "power3.inOut",
+    const esperarImagenes = imagenes.map(
+      (img) =>
+        new Promise<void>((resolve) => {
+          if (img.complete && img.naturalWidth > 0) {
+            resolve();
+          } else {
+            img.addEventListener("load", () => resolve(), { once: true });
+            img.addEventListener("error", () => resolve(), { once: true }); // evitar bloqueo si falla
+          }
         })
-        .from(".letras-animadas, .letras-nacho", {
-          duration: 2,
-          y: 100,
-          scale: 0.8,
-          opacity: 0,
-          ease: "expo.out",
-        }, "-=1");
+    );
+    
+    Promise.all(esperarImagenes).then(() => {
+    // Hacer visible el hero sin flash
+    gsap.set("#hero", { opacity: 1 });
 
-      tlEntrada.then(() => {
-        ScrollTrigger.refresh();
+      const iniciarParallaxHero = (distanciaFondo: number, distanciaLetras: number) => {
+        const tlEntrada = gsap.timeline();
+        
+        tlEntrada
+          .from([".capa-bg", ".capa-nacho"], {
+            duration: 2,
+            scale: 1.1,
+            ease: "power3.inOut",
+          })
+          .from(".letras-animadas, .letras-nacho", {
+            duration: 2,
+            y: 100,
+            scale: 0.8,
+            opacity: 0,
+            ease: "expo.out",
+          }, "-=1");
 
-        const scrollCfg = {
-          trigger: "#hero",
-          start: "top top",
-          end: "bottom top",
-          scrub: 1.5,
-        };
+        tlEntrada.then(() => {
+          ScrollTrigger.refresh();
 
-        // Animación del fondo y sujeto (lenta)
-        gsap.to(".capa-bg, .capa-nacho", {
-          y: distanciaFondo,
-          ease: "none",
-          scrollTrigger: scrollCfg,
+          const scrollCfg = {
+            trigger: "#hero",
+            start: "top top",
+            end: "bottom top",
+            scrub: 1.5,
+          };
+
+          //Animación del fondo y nacho
+          gsap.to(".capa-bg, .capa-nacho", {
+            y: distanciaFondo,
+            ease: "none",
+            scrollTrigger: scrollCfg,
+          });
+
+          //animación de las letras
+          gsap.to(".letras-animadas, .letras-nacho", {
+            y: distanciaLetras,
+            ease: "none",
+            scrollTrigger: scrollCfg,
+          });
         });
+      };
 
-        // Animación de las letras (rápida)
-        gsap.to(".letras-animadas, .letras-nacho", {
-          y: distanciaLetras,
-          ease: "none",
-          scrollTrigger: scrollCfg,
-        });
+  
+      let mm = gsap.matchMedia();
+
+      mm.add("(max-width: 767px)", () => {
+        //movil
+        iniciarParallaxHero(-30, -120);
       });
-    };
 
-    // ── GESTIÓN DE PANTALLAS (Móvil vs Escritorio) ────────────────
-    let mm = gsap.matchMedia();
+      mm.add("(min-width: 768px)", () => {
+        //pc (dist más largas)
+        iniciarParallaxHero(-80, -280);
+      });
 
-    mm.add("(max-width: 767px)", () => {
-      // En móvil: movemos el fondo muy poco (-30) y las letras algo más (-120)
-      iniciarParallaxHero(-30, -120);
     });
-
-    mm.add("(min-width: 768px)", () => {
-      // En ordenador: distancias más exageradas para el efecto dramático (-80 y -280)
-      iniciarParallaxHero(-80, -280);
-    });
-
   });
 </script>
