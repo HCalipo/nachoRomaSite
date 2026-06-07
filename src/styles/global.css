@@ -64,3 +64,11 @@
   .texto-contacto {
     font-weight: 550;
   }
+
+  #smooth-wrapper {
+  overflow: visible !important;
+}
+
+#smooth-content {
+  overflow: visible !important;
+}
