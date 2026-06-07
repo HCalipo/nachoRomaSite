@@ -1,11 +1,11 @@
 ---
-// contacto.astro
+// src/components/contacto.astro
 ---
-<section id="contacto" class="w-full relative py-24 px-8 md:px-16 overflow-hidden bg-black border-t border-white/10">
-  <div class="max-w-5xl mx-auto flex flex-col md:flex-row gap-16 md:gap-12">
+<section id="contacto" class="w-full relative py-24 px-8 md:px-16 bg-black border-t border-white/10 overflow-hidden">
+  <div class="max-w-6xl mx-auto flex flex-col md:flex-row gap-16 items-start">
     
     <div class="w-full md:w-1/2 flex flex-col justify-center text-contacto">
-      <h2 class="font-hanson text-white text-5xl md:text-7xl uppercase mb-6 leading-none">
+      <h2 class="font-family-hanson text-white text-5xl md:text-7xl uppercase mb-6 leading-none select-none">
         Booking <br/> <span class="text-transparent" style="-webkit-text-stroke: 1px white;">& Info</span>
       </h2>
       <p class="texto-contacto text-white/60 mb-10 text-sm md:text-base tracking-wide max-w-sm">
@@ -18,59 +18,89 @@
         rel="noopener noreferrer" 
         class="instagram-btn group flex items-center gap-4 w-fit cursor-pointer"
       >
-        <div class="w-14 h-14 rounded-full border border-white/30 flex items-center justify-center transition-all duration-300 group-hover:border-white group-hover:bg-white text-white group-hover:text-black">
+        <div class="boton-ig w-14 h-14 rounded-full border border-white/30 
+        flex items-center justify-center 
+        transition-all duration-300 
+        group-hover:border-white group-hover:bg-white text-white group-hover:text-black
+        group-active:border-white group-active:bg-white text-white group-active:text-black">
+          
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
             <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
             <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
           </svg>
         </div>
-        <span class="font-family-hanson tracking-widest text-sm text-white/50 group-hover:text-white transition-colors duration-300">
+        <span class="font-family-hanson tracking-widest text-sm text-white/50 
+                     group-hover:text-white group-active:text-white transition-colors duration-300"> 
           @nachoromadj
         </span>
       </a>
     </div>
 
-    <div class="w-full md:w-1/2">
-      <form action="https://formspree.io/f/TU_CODIGO_AQUI" method="POST" class="flex flex-col gap-8 form-contacto">
+    <div class="col-der w-full md:w-1/2">
+      <form 
+        name="contacto"
+        data-netlify="true"
+        method="POST" 
+        class="flex flex-col gap-8 w-full"
+      >
         
-        <div class="input-grupo relative">
+        <div class="grupo-input flex flex-col gap-2">
+          <label for="nombre" class="font-family-hanson text-white/70 uppercase text-xs tracking-wider">Tu Nombre</label>
           <input 
-            type="text" 
-            name="nombre" 
-            placeholder="TU NOMBRE" 
-            required 
-            class="w-full bg-transparent border-b border-white/20 py-3 text-white placeholder-white/30 focus:outline-none focus:border-white transition-colors uppercase tracking-widest text-xs md:text-sm"
+            type="text"
+            id="nombre"
+            name="nombre"
+            autocomplete="off"
+            required
+            class="texto-contacto w-full bg-transparent border-b border-white/30 text-white py-3 focus:outline-none focus:border-white transition-colors placeholder:text-white/20"
+            placeholder="Escribe tu nombre..."
           />
         </div>
 
-        <div class="input-grupo relative">
+        <div class="grupo-input flex flex-col gap-2">
+          <label for="email" class="font-family-hanson text-white/70 uppercase text-xs tracking-wider">Tu Correo</label>
           <input 
             type="email" 
-            name="email" 
-            placeholder="TU EMAIL" 
+            id="email" 
+            name="email"
+            autocomplete="off"
             required 
-            class="w-full bg-transparent border-b border-white/20 py-3 text-white placeholder-white/30 focus:outline-none focus:border-white transition-colors uppercase tracking-widest text-xs md:text-sm"
+            class="texto-contacto w-full bg-transparent border-b border-white/30 text-white py-3 focus:outline-none focus:border-white transition-colors placeholder:text-white/20"
+            placeholder="ejemplo@correo.com"
           />
         </div>
 
-        <div class="input-grupo relative">
+        <div class="grupo-input flex flex-col gap-2">
+          <label for="mensaje" class="font-family-hanson text-white/70 uppercase text-xs tracking-wider">Mensaje</label>
           <textarea 
+            id="mensaje" 
             name="mensaje" 
-            rows="4" 
-            placeholder="TU MENSAJE" 
+            autocomplete="off"
+            rows="4"
             required 
-            class="w-full bg-transparent border-b border-white/20 py-3 text-white placeholder-white/30 focus:outline-none focus:border-white transition-colors tracking-widest text-xs md:text-xs resize-none"
+            class="texto-contacto w-full bg-transparent border-b border-white/30 text-white py-3 focus:outline-none focus:border-white transition-colors resize-none placeholder:text-white/20"
+            placeholder="¿En qué puedo ayudarte?"
           ></textarea>
         </div>
 
         <button 
           type="submit" 
-          class="boton-enviar w-full md:w-auto md:self-start mt-2 font-hanson uppercase tracking-widest text-xs md:text-sm border border-white py-4 px-10 text-white hover:bg-white hover:text-black transition-all duration-300"
+          class="grupo-input boton-enviar 
+          w-full md:w-auto md:self-start mt-2 
+          font-family-hanson 
+          uppercase 
+          tracking-widest 
+          text-xs md:text-sm 
+          border border-white py-4 px-10 text-white 
+          hover:bg-white hover:text-black 
+          transition-all duration-300 rounded-full cursor-pointer
+          active:bg-white active:text-black 
+          transition-all duration-300 rounded-full cursor-pointer"
         >
           Enviar Mensaje
         </button>
-        
+
       </form>
     </div>
 
@@ -84,28 +114,34 @@
   gsap.registerPlugin(ScrollTrigger);
 
   document.addEventListener("DOMContentLoaded", () => {
-    
-    // 1. Animación de los textos de la izquierda (aparecen desde abajo hacia arriba)
-    gsap.from(".text-contacto > *", {
-      y: 40,
-      opacity: 0,
-      duration: 1,
-      stagger: 0.2, // Efecto cascada entre el título, el párrafo y el botón de Insta
-      ease: "power3.out",
+
+    // 1. Forzar estado inicial visible para evitar el bug de móvil
+    gsap.set(".boton-enviar", { opacity: 1, x: 0 });
+
+    const tl = gsap.timeline({
       scrollTrigger: {
         trigger: "#contacto",
-        start: "top 75%", // Se dispara cuando la sección entra por el 75% de la pantalla
+        start: "top 70%",
+        end: "center 60%",   // para bug en movil
+        scrub: 0.6,
       }
     });
 
-    // 2. Animación del formulario de la derecha (aparece desde la derecha hacia el centro)
-    gsap.from(".form-contacto .input-grupo, .boton-enviar", {
-      x: 40,
+    
+    tl.from(".text-contacto", {
+      y: -40,
       opacity: 0,
       duration: 1,
-      stagger: 0.15, 
-      ease: "power3.out",
-    });
+      ease: "power3.out"
+    })
+  
+    .from(".grupo-input", {
+      x: 40,
+      opacity: 0,
+      ease: "power2.out",
+      stagger: 0.15,
+      duration: 0.8
+    }, "-=0.5"); 
 
   });
 </script>
