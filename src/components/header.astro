@@ -1,22 +1,24 @@
 ---
+// header.astro
 
+const navLinks = [
+  { href: "#hero",     label: "Inicio"   },
+  { href: "#fechas",   label: "Fechas"   },
+  { href: "#galeria",  label: "Galeria"  },
+  { href: "#contacto", label: "Contacto" },
+];
 ---
 
-<header class="header-principal hidden md:flex  fixed w-full top-0 z-50 bg-black/20 backdrop-blur-md py-1 px-6 md:px-12 border-b border-white/10">
-    <div class="relative flex items-center justify-center w-full">
-    
+<!-- header pc -->
+<header class="header-pc hidden md:flex fixed w-full top-0 z-50 bg-black/20 backdrop-blur-md py-1 px-6 md:px-12 border-b border-white/10">
+  <div class="relative flex items-center justify-center w-full">
     <nav id="nav-menu" class="flex justify-center items-center gap-x-6 md:gap-x-14 relative preload-transitions">
-      <a href="#hero" class="nav-item text-white/60 hover:text-white transition-colors relative aria-[current=page]:text-white after:content-[''] after:absolute after:-bottom-2 after:left-0 after:w-0 after:h-[2px] after:bg-white after:transition-all aria-[current=page]:after:w-full">
-        Inicio
-      </a>
-      <a href="#fechas" class="nav-item text-white/60 hover:text-white transition-colors relative aria-[current=page]:text-white after:content-[''] after:absolute after:-bottom-2 after:left-0 after:w-0 after:h-[2px] after:bg-white after:transition-all aria-[current=page]:after:w-full">
-        Fechas
-      </a>
-      <a href="#contacto" class="nav-item text-white/60 hover:text-white transition-colors relative aria-[current=page]:text-white after:content-[''] after:absolute after:-bottom-2 after:left-0 after:w-0 after:h-[2px] after:bg-white after:transition-all aria-[current=page]:after:w-full">
-        Contacto
-      </a>
+      {navLinks.map(link => (
+        <a href={link.href} class="nav-item text-white/60 hover:text-white transition-colors relative after:content-[''] after:absolute after:-bottom-2 after:left-0 after:w-0 after:h-[2px] after:bg-white after:transition-all aria-[current=page]:text-white aria-[current=page]:after:w-full">
+          {link.label}
+        </a>
+      ))}
     </nav>
-    
   </div>
 </header>
 
@@ -28,44 +30,31 @@
   gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
   document.addEventListener("DOMContentLoaded", () => {
-    const links = document.querySelectorAll<HTMLAnchorElement>(".nav-item");
-    const header = document.querySelector(".header-principal");
 
+    const links        = document.querySelectorAll<HTMLAnchorElement>(".nav-item, .nav-item-movil");
+    const headerDesk   = document.querySelector(".header-pc");
     let mm = gsap.matchMedia();
-
     links.forEach(link => {
       link.addEventListener("click", (e) => {
         e.preventDefault();
-        
-        const targetId = link.getAttribute("href"); 
-        
-        if (!targetId || !targetId.startsWith("#")) return; 
-
+        const targetId = link.getAttribute("href");
+        if (!targetId?.startsWith("#")) return;
         const targetSection = document.querySelector(targetId);
-        
         if (!targetSection) return; 
-
-        const smoother = ScrollSmoother.get(); 
-
-        if (smoother) {
-          smoother.scrollTo(targetSection, true, "top top");
-        } else {
-          targetSection.scrollIntoView({ behavior: "smooth" });
-        }
       });
     });
 
     mm.add("(min-width: 768px)", () => {
       
-      if (header) {
+      if (headerDesk) {
         ScrollTrigger.create({
           start: "top top",
           end: "max",
           onUpdate: (self) => {
             if (self.direction === 1 && self.scroll() > 100) {
-              gsap.to(header, { yPercent: -100, duration: 0.3, ease: "power2.out" });
+              gsap.to(headerDesk, { yPercent: -100, duration: 0.3, ease: "power2.out" });
             } else {
-              gsap.to(header, { yPercent: 0, duration: 0.3, ease: "power2.out" });
+              gsap.to(headerDesk, { yPercent: 0, duration: 0.3, ease: "power2.out" });
             }
           }
         });
@@ -73,11 +62,8 @@
 
       links.forEach(link => {
         const targetId = link.getAttribute("href");
-        if (!targetId || !targetId.startsWith("#")) return;
-
+        if (!targetId?.startsWith("#")) return;
         const targetSection = document.querySelector(targetId);
-
-        // Solo vigilamos la sección si realmente existe en el HTML
         if (targetSection) {
           ScrollTrigger.create({
             trigger: targetSection,
@@ -92,7 +78,9 @@
           });
         }
       });
-
     });
+  
   });
 </script>
+
+
