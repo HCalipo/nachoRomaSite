@@ -1,11 +1,16 @@
 ---
 // header.astro
 
+
+const currentPath = Astro.url.pathname;
+const isIndex = currentPath === "/";
+
 const navLinks = [
   { href: "#hero",     label: "Inicio"   },
   { href: "#fechas",   label: "Fechas"   },
   { href: "#galeria",  label: "Galeria"  },
   { href: "#contacto", label: "Contacto" },
+  { href: "/press-kit", label: "Press Kit" },
 ];
 ---
 
@@ -14,7 +19,7 @@ const navLinks = [
   <div class="relative flex items-center justify-center w-full">
     <nav id="nav-menu" class="flex justify-center items-center gap-x-6 md:gap-x-14 relative preload-transitions">
       {navLinks.map(link => (
-        <a href={link.href} class="nav-item text-white/60 hover:text-white transition-colors relative after:content-[''] after:absolute after:-bottom-2 after:left-0 after:w-0 after:h-[2px] after:bg-white after:transition-all aria-[current=page]:text-white aria-[current=page]:after:w-full">
+        <a href={isIndex ? link.href : `/${link.href}`} class="nav-item text-white/60 hover:text-white transition-colors relative after:content-[''] after:absolute after:-bottom-2 after:left-0 after:w-0 after:h-[2px] after:bg-white after:transition-all aria-[current=page]:text-white aria-[current=page]:after:w-full">
           {link.label}
         </a>
       ))}
@@ -57,7 +62,7 @@ const navLinks = [
 ">
   <nav class="flex flex-col gap-8">
     {navLinks.map(link => (
-      <a href={link.href} class="nav-item-movil font-hanson-bold text-white/50 text-3l uppercase tracking-widest transition-colors hover:text-white active:text-white">
+      <a href={isIndex ? link.href : `/${link.href}`} class="nav-item-movil font-hanson-bold text-white/50 text-3l uppercase tracking-widest transition-colors hover:text-white active:text-white">
         {link.label}
       </a>
     ))}
@@ -140,7 +145,11 @@ const navLinks = [
       link.addEventListener("click", (e) => {
         e.preventDefault();
         const targetId = link.getAttribute("href");
-        if (!targetId?.startsWith("#")) return;
+        if (!targetId?.startsWith("#")){
+          window.location.href = targetId!;
+          return;
+        } 
+        
         const targetSection = document.querySelector(targetId);
         if (!targetSection) return;
 
