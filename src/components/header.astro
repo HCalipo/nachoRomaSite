@@ -22,6 +22,59 @@ const navLinks = [
   </div>
 </header>
 
+<!-- header movil -->
+<header class="header-movil md:hidden fixed top-0 left-0 w-full z-50 flex items-center px-5 py-4 overflow-hidden">
+  <button id="m_hamburguesa_movil" aria-label="Abrir menú" aria-expanded="false" style="-webkit-tap-highlight-color: transparent;">
+    <svg id="icon-open" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round">
+      <line x1="3" y1="6"  x2="21" y2="6"/>
+      <line x1="3" y1="12" x2="21" y2="12"/>
+      <line x1="3" y1="18" x2="21" y2="18"/>
+    </svg>
+    <svg id="icon-close" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" style="display:none;">
+      <line x1="18" y1="6" x2="6" y2="18"/>
+      <line x1="6"  y1="6" x2="18" y2="18"/>
+    </svg>
+  </button>
+</header>
+
+<!-- panel movil -->
+<div id="menu-panel" aria-hidden="true" style="
+  position: fixed;
+  top: 0; left: 0;
+  width: 75vw;
+  max-width: 200px;
+  height: 100dvh;
+  z-index: 49;
+  background: rgba(0,0,0,0.97);
+  border-right: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 2.5rem;
+  transform: translateX(-100%);
+  visibility: hidden;
+  pointer-events: none;
+">
+  <nav class="flex flex-col gap-8">
+    {navLinks.map(link => (
+      <a href={link.href} class="nav-item-movil font-hanson-bold text-white/50 text-3l uppercase tracking-widest transition-colors hover:text-white active:text-white">
+        {link.label}
+      </a>
+    ))}
+  </nav>
+</div>
+
+<!-- fondo menu -->
+<div id="menu-overlay" style="
+  position: fixed;
+  inset: 0;
+  z-index: 48;
+  background: rgba(0,0,0,0.5);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+"></div>
+
 <script>
   import { gsap } from "gsap";
   import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -31,30 +84,95 @@ const navLinks = [
 
   document.addEventListener("DOMContentLoaded", () => {
 
-    const links        = document.querySelectorAll<HTMLAnchorElement>(".nav-item, .nav-item-movil");
-    const headerDesk   = document.querySelector(".header-pc");
-    let mm = gsap.matchMedia();
+    const links               = document.querySelectorAll<HTMLAnchorElement>(".nav-item, .nav-item-movil");
+    const headerPC            = document.querySelector(".header-pc");
+    const headerMov           = document.querySelector<HTMLElement>(".header-movil");
+    const panel               = document.getElementById("menu-panel") as HTMLElement;
+    const overlay             = document.getElementById("menu-overlay") as HTMLElement;
+    const m_hamburguesa_movil  = document.getElementById("m_hamburguesa_movil") as HTMLButtonElement;
+    const iconOpen            = document.getElementById("icon-open") as HTMLElement;
+    const iconClose           = document.getElementById("icon-close") as HTMLElement;
+    let   isMenuAbierto       = false;
+
+    //panel movil 
+    function openMenu() {
+      isMenuAbierto = true;
+      panel.style.visibility    = "visible";
+      panel.style.pointerEvents = "auto";
+      overlay.style.visibility  = "visible";
+      overlay.style.pointerEvents = "auto";
+      m_hamburguesa_movil.setAttribute("aria-expanded", "true");
+      panel.setAttribute("aria-hidden", "false");
+      iconOpen.style.display  = "none";
+      iconClose.style.display = "block";
+      document.body.style.overflow = "hidden";
+
+      gsap.to(panel,   { x: 0,   duration: 0.35, ease: "power3.out" });
+      gsap.to(overlay, { opacity: 1, duration: 0.3 });
+    }
+
+    function closeMenu() {
+      isMenuAbierto = false;
+      m_hamburguesa_movil.setAttribute("aria-expanded", "false");
+      panel.setAttribute("aria-hidden", "true");
+      iconOpen.style.display  = "block";
+      iconClose.style.display = "none";
+      document.body.style.overflow = "";
+
+      gsap.to(panel,   { x: "-100%", duration: 0.3, ease: "power3.in" });
+      gsap.to(overlay, {
+        opacity: 0,
+        duration: 0.25,
+        onComplete: () => {
+          overlay.style.visibility    = "hidden";
+          overlay.style.pointerEvents = "none";
+          panel.style.visibility      = "hidden";
+          panel.style.pointerEvents   = "none";
+        }
+      });
+    }
+
+    m_hamburguesa_movil.addEventListener("click", () => isMenuAbierto ? closeMenu() : openMenu());
+    overlay.addEventListener("click", closeMenu);
+
+    // navecación pc y movil
     links.forEach(link => {
       link.addEventListener("click", (e) => {
         e.preventDefault();
         const targetId = link.getAttribute("href");
         if (!targetId?.startsWith("#")) return;
         const targetSection = document.querySelector(targetId);
-        if (!targetSection) return; 
+        if (!targetSection) return;
+
+        if (isMenuAbierto) closeMenu();
+
+        // Pequeño delay en móvil para que el panel cierre antes de saltar
+        const delay = isMenuAbierto ? 400 : 0;
+        setTimeout(() => {
+          const smoother = ScrollSmoother.get();
+          if (smoother) {
+            smoother.scrollTo(targetSection, true, "top top");
+          } else {
+            targetSection.scrollIntoView({ behavior: "smooth" });
+          }
+        }, delay);
       });
     });
 
+    
+    let mm = gsap.matchMedia();
+    //escritorio
     mm.add("(min-width: 768px)", () => {
       
-      if (headerDesk) {
+      if (headerPC) {
         ScrollTrigger.create({
           start: "top top",
           end: "max",
           onUpdate: (self) => {
             if (self.direction === 1 && self.scroll() > 100) {
-              gsap.to(headerDesk, { yPercent: -100, duration: 0.3, ease: "power2.out" });
+              gsap.to(headerPC, { yPercent: -100, duration: 0.3, ease: "power2.out" });
             } else {
-              gsap.to(headerDesk, { yPercent: 0, duration: 0.3, ease: "power2.out" });
+              gsap.to(headerPC, { yPercent: 0, duration: 0.3, ease: "power2.out" });
             }
           }
         });
@@ -79,7 +197,23 @@ const navLinks = [
         }
       });
     });
-  
+    //movil
+    mm.add("(max-width: 767px)", () => {
+      if (!headerMov) return;
+
+      ScrollTrigger.create({
+        start: "top top",
+        end: "max",
+        onUpdate: (self) => {
+          if (isMenuAbierto) return; // no ocultar si el panel está abierto
+          if (self.direction === 1 && self.scroll() > 40) {
+            gsap.to(headerMov, { yPercent: -100, duration: 0.3, ease: "power2.out" });
+          } else {
+            gsap.to(headerMov, { yPercent: 0, duration: 0.3, ease: "power2.out" });
+          }
+        }
+      });
+    });
   });
 </script>
 
