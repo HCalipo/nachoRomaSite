@@ -1,0 +1,45 @@
+---
+import LayoutSimple from "../layouts/Layout-simple.astro";
+---
+
+<LayoutSimple title="Press Kit — Nacho Roma" description="Descarga el material de prensa de Nacho Roma">
+
+  <main class="relative w-full h-screen flex items-center justify-center overflow-hidden">
+
+    <!-- fondo oscuro -->
+    <div class="absolute inset-0">
+      <img
+        src="/Foto_escritorio.webp"
+        alt=""
+        aria-hidden="true"
+        class="w-full h-full object-cover"
+      />
+      <div class="absolute inset-0 bg-black/70"></div>
+    </div>
+
+    <div class="relative z-10 flex flex-col items-center gap-8 px-6 text-center">
+
+      <h1 class="font-hanson font-thin text-white text-4xl md:text-6xl uppercase leading-none">
+        Press Kit
+      </h1>
+
+      <p class="text-white/50 text-sm md:text-base tracking-widest uppercase">
+        Material de prensa - Nacho Roma
+      </p>
+
+      <a
+        href="/press-kit.zip"
+        download
+        class="font-hanson uppercase tracking-widest text-xs md:text-sm
+               border border-white py-4 px-12 text-white rounded-full
+               hover:bg-white hover:text-black active:bg-white active:text-black
+               transition-all duration-300 cursor-pointer"
+      >
+        Descargar
+      </a>
+      
+    </div>
+
+  </main>
+
+</LayoutSimple>
