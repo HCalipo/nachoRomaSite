@@ -18,7 +18,7 @@ export const etherealAdapter: EmailAdapter = {
 
     const info = await transporter.sendMail({
       from: `"Web NachoRoma" <${testAccount.user}>`,
-      to: 'hugop27m@gmail.com',
+      to: 'nachoromadj@gmail.com',
       replyTo: email,
       subject: `Nuevo mensaje de ${nombre}`,
       html: `
