@@ -19,7 +19,8 @@ const { title, description } = Astro.props;
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description ?? ""} />
 
-    <link rel="icon" href="/letrasNachoRoma.ico" />
+    <link rel="icon" type="image/png" href="/logoNacho-dark.png" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" type="image/png" href="/logoNacho-light.png" media="(prefers-color-scheme: light)" />
 
     <link rel="preload" href="/Foto_escritorio.webp" as="image"  type="image/webp" />
     <link rel="preload" href="/Foto_escritorio_sinFondo.webp" as="image"  type="image/webp"/>
