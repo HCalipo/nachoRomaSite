@@ -1,16 +1,12 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
-import node from '@astrojs/node';
-
-const isDev = process.env.NODE_ENV === 'development';
+import vercel from '@astrojs/vercel';
 
 export default defineConfig({
-  output: 'static',
+  output: 'server', // o 'hybrid'
   vite: {
     plugins: [tailwindcss()]
   },
-  adapter: isDev ? undefined : node({
-    mode: 'standalone'
-  })
+  adapter: vercel(),
 });
