@@ -1,7 +1,4 @@
 import type { EmailAdapter } from './types';
-import { hostingerAdapter } from './adapters/hostinger';
-// import { resendAdapter } from './adapters/resend';
-import { etherealAdapter } from './adapters/ethereal';
+import { web3formsAdapter } from './adapters/web3form';
 
-export const emailAdapter: EmailAdapter =
-  import.meta.env.DEV ? etherealAdapter : hostingerAdapter;
+export const emailAdapter: EmailAdapter = web3formsAdapter;
