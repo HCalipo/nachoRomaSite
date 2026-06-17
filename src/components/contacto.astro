@@ -42,7 +42,7 @@
         id="contacto-form"
         class="flex flex-col gap-8 w-full"
       >
-        <!-- Honeypot — invisible para humanos, los bots lo rellenan -->
+        <!-- Honeypot, invisible para humanos, los bots lo rellenan -->
         <div style="position:absolute; left:-9999px; opacity:0; pointer-events:none;" aria-hidden="true">
           <input type="text" name="website" tabindex="-1" autocomplete="off" />
         </div>
@@ -136,31 +136,27 @@
     boton.textContent = 'Enviando...';
     feedback.className = 'text-sm font-family-hanson tracking-wider hidden';
 
-    const data = {
-      nombre:  (form.querySelector('#nombre') as HTMLInputElement).value,
-      email:   (form.querySelector('#email')  as HTMLInputElement).value,
-      mensaje: (form.querySelector('#mensaje') as HTMLTextAreaElement).value,
-      website: (form.querySelector('[name="website"]') as HTMLInputElement).value,
-    };
+    const formData = new FormData(form);
+  
+    formData.append("access_key", "d152db84-ae15-47e1-a5e5-d157f91c58ed"); //se expone la clave por web3form, solo funciona así.
 
     try {
-      const res = await fetch('/api/contacto', {
+      const res = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: formData
       });
 
       const json = await res.json();
 
-      if (json.ok) {
-        feedback.textContent = 'Mensaje enviado. ¡Nos pondremos en contacto contigo pronto!';
+      if (res.ok && json.success) {
+        feedback.textContent = 'Mensaje enviado. Nos pondremos en contacto contigo pronto.';
         feedback.className = 'text-sm font-family-hanson tracking-wider text-white/60';
         form.reset();
       } else {
-        feedback.textContent = json.error ?? 'Algo ha ido mal. Inténtalo de nuevo.';
+        feedback.textContent = json.message || 'Error al enviar el formulario. Inténtalo de nuevo.';
         feedback.className = 'text-sm font-family-hanson tracking-wider text-red-400';
       }
-    } catch {
+    } catch (error) {
       feedback.textContent = 'Error de conexión. Inténtalo de nuevo.';
       feedback.className = 'text-sm font-family-hanson tracking-wider text-red-400';
     } finally {
@@ -168,6 +164,5 @@
       boton.textContent = 'Enviar Mensaje';
     }
   });
-
 
 </script>
