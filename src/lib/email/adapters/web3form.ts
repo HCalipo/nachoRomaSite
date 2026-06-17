@@ -19,16 +19,25 @@ export const web3formsAdapter: EmailAdapter = {
         }),
       });
 
-      const json = await res.json();
+      //texto en lugar de json, prueba.
+      const textResponse = await res.text();
+      
+      let json;
+      try {
+        json = JSON.parse(textResponse);
+      } catch (e) {
+        console.error('La respuesta no es JSON. Contenido:', textResponse.substring(0, 250));
+        return { ok: false, error: 'Fallo inesperado del servidor de correo.' };
+      }
 
       if (res.ok && json.success) {
         return { ok: true };
       } else {
-        return { ok: false, error: json.message || 'Error en Web3Forms' };
+        return { ok: false, error: json.message || 'Error en el envío.' };
       }
     } catch (err) {
       console.error('[web3formsAdapter]', err);
-      return { ok: false, error: 'Error de conexión con Web3Forms' };
+      return { ok: false, error: 'Error de conexión.' };
     }
   }
 };
