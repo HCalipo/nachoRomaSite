@@ -1,0 +1,23 @@
+---
+// footer.astro
+
+---
+
+
+<footer class="footer-fade fixed bottom-0 z-50 flex w-full h-15 items-end justify-center">
+  
+  <img src="/logoNacho-dark.png" alt="Logo" class="h-15 w-auto"/>
+</footer>
+
+
+<style>
+  .footer-fade {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    background: linear-gradient(to top, rgba(0,0,0,0.2), rgba(0,0,0,0));
+    mask-image: linear-gradient(to top, black 70%, transparent 100%);
+    }
+</style>
+
+
+
