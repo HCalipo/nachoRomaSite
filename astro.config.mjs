@@ -8,5 +8,9 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()]
   },
-  adapter: vercel(),
+  adapter: vercel({
+    webAnalytics: {
+      enabled: true
+    }
+  }),
 });
