@@ -2,7 +2,6 @@
 import "../styles/global.css";
 
 import Header from "../components/header.astro";
-
 export interface Props {
   title: string;
   description?: string;
@@ -37,6 +36,7 @@ const { title, description } = Astro.props;
         <slot />
       </div>
     </div>
+
     <script>
       import { gsap } from "gsap";
       import { ScrollTrigger } from "gsap/ScrollTrigger";
