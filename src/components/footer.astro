@@ -1,0 +1,20 @@
+---
+// footer.astro
+interface Props {
+  fixed?: boolean; 
+}
+const { fixed = false } = Astro.props;
+---
+
+<footer class:list={["footer-fade w-full h-15 flex items-end justify-center", { "fixed bottom-0 z-50": fixed }]}>
+  <img src="/logoNacho-dark.png" alt="Logo" class="h-15 w-auto"/>
+</footer>
+
+<style>
+  .footer-fade {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    background: linear-gradient(to top, rgba(0,0,0,0.2), rgba(0,0,0,0));
+    mask-image: linear-gradient(to top, black 70%, transparent 100%);
+  }
+</style>
