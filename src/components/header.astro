@@ -12,6 +12,8 @@ const navLinks = [
   { href: "#contacto", label: "Contacto" },
   { href: "/press-kit", label: "Press Kit" },
 ];
+
+const hrefFor = (href: string) => (href.startsWith("#") && !isIndex ? `/${href}` : href);
 ---
 
 <!-- header pc -->
@@ -19,7 +21,7 @@ const navLinks = [
   <div class="relative flex items-center justify-center w-full">
     <nav id="nav-menu" class="flex justify-center items-center gap-x-6 md:gap-x-14 relative preload-transitions">
       {navLinks.map(link => (
-        <a href={isIndex ? link.href : `/${link.href}`} class="nav-item text-white/60 hover:text-white transition-colors relative after:content-[''] after:absolute after:-bottom-2 after:left-0 after:w-0 after:h-[2px] after:bg-white after:transition-all aria-[current=page]:text-white aria-[current=page]:after:w-full">
+        <a href={hrefFor(link.href)} class="nav-item">
           {link.label}
         </a>
       ))}
@@ -62,7 +64,7 @@ const navLinks = [
 ">
   <nav class="flex flex-col gap-8">
     {navLinks.map(link => (
-      <a href={isIndex ? link.href : `/${link.href}`} class="nav-item-movil font-hanson-bold text-white/50 text-3l uppercase tracking-widest transition-colors hover:text-white active:text-white">
+      <a href={hrefFor(link.href)} class="nav-item-movil font-hanson text-white/50 text-base uppercase tracking-widest transition-colors hover:text-white active:text-white">
         {link.label}
       </a>
     ))}
@@ -90,21 +92,21 @@ const navLinks = [
   document.addEventListener("DOMContentLoaded", () => {
 
     const links               = document.querySelectorAll<HTMLAnchorElement>(".nav-item, .nav-item-movil");
-    const headerPC            = document.querySelector(".header-pc");
+    const headerPC            = document.querySelector<HTMLElement>(".header-pc");
     const headerMov           = document.querySelector<HTMLElement>(".header-movil");
     const panel               = document.getElementById("menu-panel") as HTMLElement;
     const overlay             = document.getElementById("menu-overlay") as HTMLElement;
-    const m_hamburguesa_movil  = document.getElementById("m_hamburguesa_movil") as HTMLButtonElement;
+    const m_hamburguesa_movil = document.getElementById("m_hamburguesa_movil") as HTMLButtonElement;
     const iconOpen            = document.getElementById("icon-open") as HTMLElement;
     const iconClose           = document.getElementById("icon-close") as HTMLElement;
     let   isMenuAbierto       = false;
 
-    //panel movil 
+    //panel movil
     function openMenu() {
       isMenuAbierto = true;
-      panel.style.visibility    = "visible";
-      panel.style.pointerEvents = "auto";
-      overlay.style.visibility  = "visible";
+      panel.style.visibility      = "visible";
+      panel.style.pointerEvents   = "auto";
+      overlay.style.visibility    = "visible";
       overlay.style.pointerEvents = "auto";
       m_hamburguesa_movil.setAttribute("aria-expanded", "true");
       panel.setAttribute("aria-hidden", "false");
@@ -112,8 +114,8 @@ const navLinks = [
       iconClose.style.display = "block";
       document.body.style.overflow = "hidden";
 
-      gsap.to(panel,   { x: 0,   duration: 0.35, ease: "power3.out" });
-      gsap.to(overlay, { opacity: 1, duration: 0.3 });
+      gsap.to(panel,   { x: 0, duration: 0.35, ease: "power3.out", overwrite: true });
+      gsap.to(overlay, { opacity: 1, duration: 0.3, overwrite: true });
     }
 
     function closeMenu() {
@@ -124,10 +126,11 @@ const navLinks = [
       iconClose.style.display = "none";
       document.body.style.overflow = "";
 
-      gsap.to(panel,   { x: "-100%", duration: 0.3, ease: "power3.in" });
+      gsap.to(panel,   { x: "-100%", duration: 0.3, ease: "power3.in", overwrite: true });
       gsap.to(overlay, {
         opacity: 0,
         duration: 0.25,
+        overwrite: true,
         onComplete: () => {
           overlay.style.visibility    = "hidden";
           overlay.style.pointerEvents = "none";
@@ -139,24 +142,26 @@ const navLinks = [
 
     m_hamburguesa_movil.addEventListener("click", () => isMenuAbierto ? closeMenu() : openMenu());
     overlay.addEventListener("click", closeMenu);
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && isMenuAbierto) closeMenu();
+    });
 
-    // navecación pc y movil
+    // navegación pc y movil: solo se interceptan las anclas (#seccion);
+    // el resto de enlaces (/press-kit, /#fechas...) navegan de forma normal.
     links.forEach(link => {
       link.addEventListener("click", (e) => {
-        e.preventDefault();
         const targetId = link.getAttribute("href");
-        if (!targetId?.startsWith("#")){
-          window.location.href = targetId!;
-          return;
-        } 
-        
+        if (!targetId?.startsWith("#")) return;
+
         const targetSection = document.querySelector(targetId);
         if (!targetSection) return;
+        e.preventDefault();
 
-        if (isMenuAbierto) closeMenu();
+        // Se guarda ANTES de cerrar: antes se miraba después de closeMenu() y el delay siempre era 0
+        const estabaAbierto = isMenuAbierto;
+        if (estabaAbierto) closeMenu();
 
         // Pequeño delay en móvil para que el panel cierre antes de saltar
-        const delay = isMenuAbierto ? 400 : 0;
         setTimeout(() => {
           const smoother = ScrollSmoother.get();
           if (smoother) {
@@ -164,66 +169,61 @@ const navLinks = [
           } else {
             targetSection.scrollIntoView({ behavior: "smooth" });
           }
-        }, delay);
+        }, estabaAbierto ? 350 : 0);
       });
     });
 
-    
-    let mm = gsap.matchMedia();
+    // Oculta el header al bajar y lo muestra al subir.
+    // Solo lanza una animación cuando cambia el estado (antes se creaba un tween nuevo
+    // en cada frame de scroll, lo que provocaba tirones).
+    function autoOcultar(header: HTMLElement, umbral: number) {
+      let oculto = false;
+      const st = ScrollTrigger.create({
+        start: 0,
+        end: "max",
+        onUpdate: (self) => {
+          if (isMenuAbierto) return; // no ocultar si el panel está abierto
+          const ocultar = self.direction === 1 && self.scroll() > umbral;
+          if (ocultar === oculto) return;
+          oculto = ocultar;
+          gsap.to(header, { yPercent: ocultar ? -100 : 0, duration: 0.3, ease: "power2.out", overwrite: true });
+        }
+      });
+      return () => {
+        st.kill();
+        gsap.set(header, { yPercent: 0 });
+      };
+    }
+
+    const mm = gsap.matchMedia();
+
     //escritorio
     mm.add("(min-width: 768px)", () => {
-      
-      if (headerPC) {
-        ScrollTrigger.create({
-          start: "top top",
-          end: "max",
-          onUpdate: (self) => {
-            if (self.direction === 1 && self.scroll() > 100) {
-              gsap.to(headerPC, { yPercent: -100, duration: 0.3, ease: "power2.out" });
-            } else {
-              gsap.to(headerPC, { yPercent: 0, duration: 0.3, ease: "power2.out" });
-            }
-          }
-        });
-      }
-
+      // marcar en el menú la sección visible
       links.forEach(link => {
         const targetId = link.getAttribute("href");
         if (!targetId?.startsWith("#")) return;
         const targetSection = document.querySelector(targetId);
-        if (targetSection) {
-          ScrollTrigger.create({
-            trigger: targetSection,
-            start: "top center",
-            end: "bottom center",
-            onToggle: (self) => {
-              if (self.isActive) {
-                links.forEach(l => l.removeAttribute("aria-current"));
-                link.setAttribute("aria-current", "page");
-              }
+        if (!targetSection) return;
+        ScrollTrigger.create({
+          trigger: targetSection,
+          start: "top center",
+          end: "bottom center",
+          onToggle: (self) => {
+            if (self.isActive) {
+              links.forEach(l => l.removeAttribute("aria-current"));
+              link.setAttribute("aria-current", "page");
             }
-          });
-        }
+          }
+        });
       });
+
+      return headerPC ? autoOcultar(headerPC, 100) : undefined;
     });
+
     //movil
     mm.add("(max-width: 767px)", () => {
-      if (!headerMov) return;
-
-      ScrollTrigger.create({
-        start: "top top",
-        end: "max",
-        onUpdate: (self) => {
-          if (isMenuAbierto) return; // no ocultar si el panel está abierto
-          if (self.direction === 1 && self.scroll() > 40) {
-            gsap.to(headerMov, { yPercent: -100, duration: 0.3, ease: "power2.out" });
-          } else {
-            gsap.to(headerMov, { yPercent: 0, duration: 0.3, ease: "power2.out" });
-          }
-        }
-      });
+      return headerMov ? autoOcultar(headerMov, 40) : undefined;
     });
   });
 </script>
-
-
