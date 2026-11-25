@@ -189,8 +189,9 @@
 <script>
   import { gsap } from "gsap";
   import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import { ScrollSmoother } from "gsap/ScrollSmoother";
 
-  gsap.registerPlugin(ScrollTrigger);
+  gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
   document.addEventListener("DOMContentLoaded", () => {
 
@@ -211,10 +212,9 @@
       }
     });
 
-    // Lightbox 
-    const isMobile = () => window.innerWidth < 768;
-
+    // Lightbox
     const lightbox = document.getElementById("lightbox") as HTMLElement;
+    document.body.appendChild(lightbox);
     const lbImg    = document.getElementById("lb-img") as HTMLImageElement;
     const lbDots   = document.getElementById("lb-dots") as HTMLElement;
     const items    = document.querySelectorAll(".bento-item");
@@ -224,8 +224,9 @@
       return { src: img?.src ?? "", alt: img?.alt ?? "" };
     });
 
-    let current = 0;
-    let isOpen  = false;
+    let current  = 0;
+    let isOpen   = false;
+    let cerrando = false;
 
     // Puntos de navegación
     photos.forEach(() => {
@@ -251,6 +252,7 @@
       lightbox.style.pointerEvents = "auto";
       lightbox.setAttribute("aria-hidden", "false");
       document.body.style.overflow = "hidden";
+      ScrollSmoother.get()?.paused(true); // en escritorio el scroll lo controla el smoother
       isOpen = true;
 
       gsap.fromTo(lightbox,
@@ -264,6 +266,8 @@
     }
 
     function closeLightbox() {
+      if (!isOpen || cerrando) return;
+      cerrando = true;
       gsap.to(lightbox, {
         opacity: 0,
         duration: 0.25,
@@ -273,7 +277,9 @@
           lightbox.style.pointerEvents = "none";
           lightbox.setAttribute("aria-hidden", "true");
           document.body.style.overflow = "";
+          ScrollSmoother.get()?.paused(false);
           isOpen = false;
+          cerrando = false;
         }
       });
     }
@@ -301,10 +307,9 @@
       });
     }
 
-    //abir (implementación solo en el telefono)
+    // abrir lightbox al hacer clic en una foto
     items.forEach(item => {
       item.addEventListener("click", () => {
-        if (!isMobile()) return;
         const index = parseInt(item.getAttribute("data-index") ?? "0");
         openLightbox(index);
       });
@@ -314,6 +319,12 @@
     document.getElementById("lb-close")?.addEventListener("click", (e) => {
       e.stopPropagation();
       closeLightbox();
+    });
+
+    // Cerrar al hacer clic fuera de la foto (escritorio)
+    lightbox.addEventListener("click", (e) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest("#lb-img") && !target.closest("button")) closeLightbox();
     });
 
     // Flechas
