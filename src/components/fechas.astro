@@ -89,7 +89,47 @@ try {
 
   gsap.registerPlugin(ScrollTrigger);
 
+  // Apaga las fechas que ya han pasado. Se calcula en el navegador al abrir la página
+  // (no al publicarla), así que siempre compara con el día real de la visita.
+  // La hoja no lleva año ("SAB 18/04"), así que se deduce suponiendo que las fechas
+  // están en orden: si una fecha es anterior a la de la fila de arriba, ha cambiado el año.
+  function marcarFechasPasadas() {
+    const filas = document.querySelectorAll<HTMLElement>(".fila-fecha[data-fecha]");
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    const mesHoy = hoy.getMonth() + 1;
+
+    let anio = hoy.getFullYear();
+    let anterior: Date | null = null;
+
+    filas.forEach((fila) => {
+      const [dia, mes, anioEscrito] = (fila.dataset.fecha ?? "").split(/[\/\-.]/).map(Number);
+      if (!dia || !mes) return;
+
+      if (anioEscrito) {
+        // si algún día se escribe el año en la hoja (18/04/2027), se usa tal cual
+        anio = anioEscrito < 100 ? 2000 + anioEscrito : anioEscrito;
+      } else if (anterior === null) {
+        // primera fila: decidir a qué año pertenece respecto a hoy
+        if (mes - mesHoy > 6) anio--;      // p. ej. vemos la web en enero y la lista empieza en diciembre
+        else if (mesHoy - mes > 6) anio++; // p. ej. vemos la web en diciembre y la lista empieza en enero
+      }
+
+      let fecha = new Date(anio, mes - 1, dia);
+      if (!anioEscrito && anterior && fecha < anterior) {
+        anio++; // cambio de año dentro de la lista (dic -> ene)
+        fecha = new Date(anio, mes - 1, dia);
+      }
+      anterior = fecha;
+
+      // el mismo día del bolo sigue contando como próxima fecha
+      if (fecha < hoy) fila.classList.add("fecha-pasada");
+    });
+  }
+
   document.addEventListener("DOMContentLoaded", () => {
+
+    marcarFechasPasadas();
     
     //animación titulo fechas
     gsap.fromTo(".texto-relleno", 
@@ -132,3 +172,13 @@ try {
 
   });
 </script>
+
+<style>
+  /* Fechas ya pasadas: apagadas para que la vista vaya a las próximas */
+  .fecha-pasada > span {
+    opacity: 0.3;
+  }
+  .fecha-pasada {
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+</style>
