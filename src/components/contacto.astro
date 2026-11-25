@@ -5,11 +5,15 @@
   <div class="max-w-6xl mx-auto flex flex-col md:flex-row gap-16 items-start">
     
     <div class="w-full md:w-1/2 flex flex-col justify-center text-contacto">
-      <h2 class="font-family-hanson text-white text-5xl md:text-7xl uppercase mb-6 leading-none select-none">
-        Booking <br/> <span class="text-transparent" style="-webkit-text-stroke: 1px white;">& Info</span>
+      <h2 class="font-family-hanson text-white text-[9.5vw] md:text-[min(4.5vw,4.2rem)] uppercase mb-6 leading-none select-none">
+        Booking <br/> <span class="text-transparent" style="-webkit-text-stroke: 1px white;">& Collabs</span>
       </h2>
+      <p class="texto-contacto text-white/60 mb-4 text-sm md:text-base tracking-wide max-w-sm">
+        ¿Quieres reservar tu fecha o hacer una colaboración? Escríbenos y nos pondremos en contacto contigo lo antes posible.
+      </p>
       <p class="texto-contacto text-white/60 mb-10 text-sm md:text-base tracking-wide max-w-sm">
-        ¿Quieres reservar tu fecha? Escríbenos y nos pondremos en contacto contigo lo antes posible.
+        Contacto directo: <br/>
+        <a href="mailto:nachoromadj@gmail.com" class="text-white underline underline-offset-4 hover:text-white/70 transition-colors break-all">nachoromadj@gmail.com</a>
       </p>
       
       <a 
@@ -49,14 +53,14 @@
 
         <div class="grupo-input flex flex-col gap-2">
           <label for="nombre" class="font-family-hanson text-white/70 uppercase text-xs tracking-wider">Tu Nombre</label>
-          <input type="text" id="nombre" name="nombre" autocomplete="off" required
+          <input type="text" id="nombre" name="nombre" autocomplete="name" required
             class="texto-contacto w-full bg-transparent border-b border-white/30 text-white py-3 focus:outline-none focus:border-white transition-colors placeholder:text-white/20"
             placeholder="Escribe tu nombre..." />
         </div>
 
         <div class="grupo-input flex flex-col gap-2">
           <label for="email" class="font-family-hanson text-white/70 uppercase text-xs tracking-wider">Tu Correo</label>
-          <input type="email" id="email" name="email" autocomplete="off" required
+          <input type="email" id="email" name="email" autocomplete="email" required
             class="texto-contacto w-full bg-transparent border-b border-white/30 text-white py-3 focus:outline-none focus:border-white transition-colors placeholder:text-white/20"
             placeholder="ejemplo@correo.com" />
         </div>
@@ -99,9 +103,8 @@
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: "#contacto",
-        start: "top 70%",
-        end: "center 60%",   // para bug en movil
-        scrub: 0.6,
+        start: "top 75%",
+        toggleActions: "play none none none",
       }
     });
 
