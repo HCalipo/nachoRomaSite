@@ -1,7 +1,7 @@
 ---
 
 ---
-<section id="hero" class="relative w-full h-screen bg-black opacity-0">
+<section id="hero" class="relative w-full h-svh bg-black opacity-0">
   <div class="absolute inset-0 overflow-hidden">
 
     <img 
@@ -23,20 +23,24 @@
       src="/Foto_escritorio_sinFondo.webp" 
       class="capa-nacho absolute inset-0 w-full h-full object-cover object-center md:object-top z-20 pointer-events-none" 
       alt="Nacho sin fondo" 
+      aria-hidden="true" 
       fetchpriority="high"
       loading="eager"
       decoding="sync"
     />
 
-    <div class="letras-animadas flex md:hidden absolute inset-0 items-center justify-center z-30 pointer-events-none">
-      <h1 class="font-family-hanson font-bold text-transparent text-[20vw] md:text-[10vw] leading-[1] md:leading-none text-center select-none" style="-webkit-text-stroke: 2px rgba(255,255,255,0.9);">
+    <div class="letras-animadas flex md:hidden absolute inset-0 items-center justify-center z-30 pointer-events-none" aria-hidden="true">
+      <p class="font-family-hanson font-bold text-transparent text-[20vw] md:text-[10vw] leading-[1] md:leading-none text-center select-none" style="-webkit-text-stroke: 2px rgba(255,255,255,0.9);">
         NACHO<br class="block md:hidden"/> ROMÁ
-      </h1>
+      </p>
     </div>
 
     <div class="hero-overlay absolute inset-0 bg-black opacity-0 z-40 pointer-events-none"></div>
   </div>
 </section>
+
+<!-- Si JavaScript no carga, que el hero no se quede invisible -->
+<noscript><style>#hero { opacity: 1 !important; }</style></noscript>
 
 <script>
   import { gsap } from "gsap";
@@ -62,7 +66,11 @@
         })
     );
     
-    Promise.all(esperarImagenes).then(() => {
+    // Si las imágenes tardan demasiado (móvil con mala conexión) se muestra igualmente
+    // en vez de dejar la pantalla en negro.
+    const limite = new Promise<void>((resolve) => setTimeout(resolve, 2500));
+
+    Promise.race([Promise.all(esperarImagenes), limite]).then(() => {
     // Hacer visible el hero sin flash
     gsap.set("#hero", { opacity: 1 });
 
